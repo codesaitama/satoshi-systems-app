@@ -11,13 +11,12 @@ const root = require("path").join(__dirname, "./../client/build");
 
 app.use(express.static(root));
 
-
 app.get("/api", (req, res) => {
     res.json({ message: "Hello from server!" });
 });
 
 // All other GET requests not handled before will return our React app
-app.get("*", (req, res) => { res.sendFile("index.html", { root }); });
+app.get("*", (req, res) => { req; res.sendFile("index.html", { root }); });
 
 app.listen(PORT, () => {
     console.log(`Server listening on ${PORT}`);
