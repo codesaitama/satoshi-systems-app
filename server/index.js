@@ -1,6 +1,7 @@
 // server/index.js
 const express = require("express");
 const dotenv = require('dotenv');
+const userRouter = require('./src/sqlite/route/user.route.js');
 dotenv.config();
 
 const PORT = process.env.PORT || 3001;
@@ -10,6 +11,7 @@ const app = express();
 const root = require("path").join(__dirname, "./../client/build");
 
 app.use(express.static(root));
+app.use(`/api`, userRouter)
 
 app.get("/api", (req, res) => {
     res.json({ message: "Hello from server!" });
