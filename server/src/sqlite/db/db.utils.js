@@ -3,5 +3,6 @@ module.exports = {
     ONE: 'ONE',
     CREATE: 'CREATE',
     UPDATE: 'UPDATE',
-    DELETE: 'DELETE'
+    DELETE: 'DELETE',
+    CUD: 'CUD'
 }

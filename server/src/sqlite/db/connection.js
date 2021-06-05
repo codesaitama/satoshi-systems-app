@@ -1,10 +1,10 @@
 const sqlite3 = require('sqlite3').verbose();
-const {ALL, UPDATE, CREATE, DELETE, ONE} = require('./db.utils.js');
+const {ALL, CUD, ONE} = require('./db.utils.js');
 
 class Connection {
 
     constructor(){
-        this.db = new sqlite3.Database(':memory:', this.checkConnection);
+        this.db = new sqlite3.Database('./satoshiDB.db', this.checkConnection);
     }
 
     checkConnection(err) {
@@ -15,7 +15,8 @@ class Connection {
     }
 
     closeConnection(){
-        this.db.close((err) => {
+        const {db} = this;
+        db.close((err) => {
             if (err) {
                 return console.error(err.message);
             }
@@ -23,8 +24,11 @@ class Connection {
         });
     }
 
+    
+
     createTable(){
-        this.db.serialize(() => {
+        const {db} = this;
+        db.serialize(() => {
             // Queries scheduled here will be serialized.
             db.run(`CREATE TABLE user (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -43,49 +47,21 @@ class Connection {
           });
     }
 
-    query = async (state, sql, values) => {
+    query = (state, sql, values = [], callback) => {
         
-        return new Promise((resolve, reject) => {
-            const callback = (error, result) => {
-                if (error) {
-                    reject(error);
-                    return;
-                }
-                resolve(result);
-            }
+        // execute will internally call prepare and query
+        if(state === ALL){
+            return this.db.all(sql, values, callback);
+        }
 
-            // execute will internally call prepare and query
-            if(state === ALL){
-                console.log({sql, values})
-                this.db.all(sql, values, callback);
-                return
-            }
+        if(state === ONE){
+            return this.db.get(sql, values, callback);
+        }
 
-            if(state === ONE){
-                this.db.get(sql, values, callback);
-                return
-            }
+        if(state === CUD){
+            return this.db.run(sql, values, callback);
+        }
 
-            if(state === CREATE){
-                this.db.run(sql, values, callback);
-                return
-            }
-
-            if(state === UPDATE){
-                this.db.run(sql, values, callback);
-                return
-            }
-
-            if(state === DELETE){
-                this.db.run(sql, values, callback);
-                return
-            }
-
-            //this.closeConnection();
-            
-        }).catch(err => {
-            throw err;
-        });
     }
 }
 

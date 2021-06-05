@@ -1,16 +1,21 @@
 const query = require('../db/connection.js');
-const {ALL} = require('../db/db.utils.js');
+const { ALL } = require('../db/db.utils.js');
 
-class UserModel{
-    table = 'user';
+class UserModel {
+    table = 'satoshiDB.user';
 
-    find = async(params = {}) => {
+    find = async (params = {}) => {
         let sql = `SELECT * FROM ${this.table}`;
+        let data = null;
 
         if (!Object.keys(params).length) {
-            return await query(ALL, sql, []);
+            return query(ALL, sql, function (err, results) {
+                if (!err)
+                    data = results
+                else data = err
+            });
         }
-        //return await query(sql, [...values]);
+        return data
     }
 }
 
