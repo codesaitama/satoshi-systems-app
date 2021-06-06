@@ -1,7 +1,11 @@
 {
   "name": "satoshi-systems-app",
   "version": "1.0.0",
-  "description": "",
+  "description": "A simple node and react application using mysql as the database.",
+  "repository": "https://github.com/codesaitama/satoshi-systems-app",
+  "keywords": [],
+  "author": "Emmanuel M. Achana",
+  "license": "ISC",
   "main": "index.js",
   "engines": {
     "node": "12.16.1"
@@ -10,13 +14,13 @@
     "start": "nodemon index.js",
     "build": "cd ../client && npm run build"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
-    "nodemon": "^2.0.7",
-    "sqlite3": "^5.0.2"
+    "jsonwebtoken": "^8.5.1",
+    "mysql": "^2.18.1",
+    "nodemon": "^2.0.7"
   }
 }
