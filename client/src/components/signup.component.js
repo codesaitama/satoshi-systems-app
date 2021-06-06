@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { Link, Redirect } from "react-router-dom";
-import {postOrPutRequest, method, accountAuth} from './../tools/utils.js';
+import { postOrPutRequest, method, accountAuth } from './../tools/utils.js';
 
 export default function SignUp() {
     const [getUserData, setUserData] = useState({ name: '', age: 0, score: 0, password: '', confirmpassword: '' });
-    const [postStatus, setPostStatus] = useState(null);
+    const [postStatus, setPostStatus] = useState(false);
     const [passwordShown, setPasswordShown] = useState(false);
-    const [redirectToReferrer, setRedirectToReferrer] = useState(accountAuth.isAuthenticated);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const handleOnChange = (evt) => {
         setUserData(data => ({ ...data, [evt.target.name]: evt.target.value }))
@@ -53,17 +53,32 @@ export default function SignUp() {
 
         score = Number(score);
         age = Number(age);
+        setErrorMessage('')
 
-        postOrPutRequest('/api/user/create', method.POST, { name, age, score, password }, function({response}){
-            setPostStatus(response.message)
+        postOrPutRequest('/api/user/create', method.POST, { name, age, score, password }, function (response) {
+
+            if (typeof response == 'object' && response.hasOwnProperty('status')) {
+                setPostStatus(response.message === 'User was created!')
+            }
+
+            if (typeof response == 'object' && response.hasOwnProperty('type')) {
+                if(response.message.includes('ER_DUP_ENTRY: Duplicate entry')){
+                    setErrorMessage('Name already taken')
+                }
+            }
+
         });
     }
 
-    if (redirectToReferrer) {
+    if (accountAuth.isAuthenticated) {
         return <Redirect to='/home' />
     }
 
-    if (postStatus === 'User was created!') {
+    // if (!accountAuth.isAuthenticated) {
+    //     return <Redirect to='/sign-up' />
+    // }
+
+    if (postStatus) {
         return <Redirect to='/sign-in' />
     }
 
@@ -71,7 +86,7 @@ export default function SignUp() {
     return (
         <form onSubmit={handleOnSubmit} autoComplete="off">
             <h3>Sign Up</h3>
-
+            <small className='text-danger'>{errorMessage}</small><br />
             <div className="form-group">
                 <label>Username</label>
                 <input type="text" name="name" required aria-required="true" onChange={handleOnChange} className="form-control" placeholder="Name" />

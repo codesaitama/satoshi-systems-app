@@ -2,6 +2,7 @@
 const express = require("express");
 const dotenv = require('dotenv');
 const userRouter = require('./src/route/user.route.js');
+const { errorMiddleware } = require('./src/utils.min.js');
 dotenv.config();
 
 const PORT = process.env.PORT || 3001;
@@ -22,6 +23,9 @@ app.get("/api", (req, res) => {
 
 // All other GET requests not handled before will return our React app
 app.get("*", (req, res) => { req; res.sendFile("index.html", { root }); });
+
+// Error middleware
+app.use(errorMiddleware);
 
 app.listen(PORT, () => {
     console.log(`Server listening on ${PORT}`);

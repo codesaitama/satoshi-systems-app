@@ -39,12 +39,18 @@ export default function Login() {
         }
 
         postOrPutRequest('/api/user/login', method.POST, { name, password }, function(response){
-            login()
+            console.log(response)
+            if (typeof response == 'object' && response.hasOwnProperty('token')) {
+                login()
+            }
+            
         });
     }
 
     if (redirectToReferrer) {
-        return <Redirect to={state?.from || '/'} />
+        console.log({state})
+        //to={state?.from || '/'}
+        return <Redirect to={'/home'} />
     }
 
     return (

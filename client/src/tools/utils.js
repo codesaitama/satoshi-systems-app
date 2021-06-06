@@ -28,28 +28,29 @@ export const method = { POST: 'POST', PUT: 'PUT', GET: 'GET', DELETE: 'DELETE' }
 export const _codes = { good: [200, 201, 301], bad: [401, 302, 400, 409, 500] }
 
 export function postOrPutRequest(url, method, data, callback) {
-    fetch(url, {
-        method: method,
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    }).then((res) => {
-        //handleError(res.status);
-        res.json()
-    }).then(data => callback(data)).catch(err => {
-        let statusCode = 500
-        callback(err, statusCode)
-    });
+    try{
+        fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then((res) => {
+            //handleError(res.status);
+            return res.json()
+        }).then(data => callback({...data}))
+    }catch(err){
+        console.log(err)
+        callback(err)
+    };
 }
-
+//Satoshi@123
 export function GetRequest(url, callback) {
 
     fetch(url)
         .then(response => response.json())
         .then(data => callback(data)).catch(err => {
-            let statusCode = 500;
-            callback(err, statusCode)
+            callback(err);
         });
 }
 

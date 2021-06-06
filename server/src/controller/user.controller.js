@@ -67,7 +67,9 @@ class UserController {
 
         await this.hashPassword(req);
 
-        const result = await UserModel.create(req.body)
+        const result = await UserModel.create(req.body);
+
+        console.log(result)
 
         if (!result) {
             throw new HttpException(500, 'Something went wrong');

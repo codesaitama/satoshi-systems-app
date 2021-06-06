@@ -17,58 +17,22 @@ function App() {
     GetRequest("/api/user/state", function (response) {
       if (typeof response == 'object' && response.hasOwnProperty('status')) {
 
-        response.status ? accountAuth.authenticate(): accountAuth.signOut();
-
-        setIsAuthenticated(accountAuth.isAuthenticated)
+        response.status ? accountAuth.authenticate(() => setIsAuthenticated(true)) : accountAuth.signOut(() => setIsAuthenticated(false));
       }
     });
   }, []);
 
-  const logOut = () => {
-    console.log({ isAuthenticated })
-  }
-
   return (
     <Router>
+      {
+        accountAuth.isAuthenticated 
+        ? 
+        <Redirect to={'/'} /> : <Redirect to={'/sign-in'} />
+      }
       <div className="App">
         <nav className="navbar navbar-expand-lg navbar-light fixed-top">
           <div className="container">
-            <Link className="navbar-brand" to={isAuthenticated ? "/home" : "/sign-in"}>Satoshi App</Link>
-            {/* {
-              isAuthenticated
-                ?
-                <div className="collapse navbar-collapse" id="navbarTogglerDemo02">
-                  {
-                    !isAuthenticated
-                      ?
-                      <ul className="navbar-nav ml-auto">
-                        <li className="nav-item">
-                          <Link className="nav-link" to={"/sign-in"}>Login</Link>
-                        </li>
-                        <li className="nav-item">
-                          <Link className="nav-link" to={"/sign-up"}>Sign up</Link>
-                        </li>
-                      </ul>
-                      :
-                      <ul className="navbar-nav ml-auto">
-                        <li className="nav-item">
-                          <Link className="nav-link" to={""} onClick={logOut}>Sign Out</Link>
-                        </li>
-                      </ul>
-                  }
-                </div>
-                :
-                <div className="collapse navbar-collapse">
-                  <ul className="navbar-nav ml-auto">
-                    <li className="nav-item">
-                      <Link className="nav-link" to={"/sign-in"}>Login</Link>
-                    </li>
-                    <li className="nav-item">
-                      <Link className="nav-link" to={"/sign-up"}>Sign up</Link>
-                    </li>
-                  </ul>
-                </div>
-            } */}
+            <Link className="navbar-brand" to={accountAuth.isAuthenticated ? "/home" : "/sign-in"}>Satoshi App</Link>
           </div>
         </nav>
 
@@ -79,7 +43,7 @@ function App() {
               <Route path="/sign-in" component={Login} />
               <Route path="/sign-up" component={SignUp} /> */}
 
-            <PrivateRoute exact path='/'>
+              <PrivateRoute exact path='/'>
                 <HomePage />
               </PrivateRoute>
               <Route path="/sign-in">

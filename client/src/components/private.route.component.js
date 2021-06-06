@@ -1,8 +1,7 @@
-import { Route, Redirect, useLocation } from "react-router-dom";
+import { Route, Redirect } from "react-router-dom";
 import { accountAuth } from '../tools/utils.js';
 
 function PrivateRoute({ children, ...rest }) {
-    //const {state} = useLocation();
 
     return (
         <Route {...rest} render={({ location }) => {

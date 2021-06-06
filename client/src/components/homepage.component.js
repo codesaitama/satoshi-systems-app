@@ -1,14 +1,19 @@
 import React, { useState } from "react";
-import { Link, Redirect } from "react-router-dom";
+import { Link, Redirect, useHistory } from "react-router-dom";
 import { GetRequest, accountAuth } from './../tools/utils.js';
+
+
 export default function HomePage() {
     const [getUserData, setUserData] = useState({ name: 'Loading', age: 'Loading', score: 'Loading' });
     const [redirectToReferrer, setRedirectToReferrer] = useState(accountAuth.isAuthenticated);
-    let { name, age, score } = getUserData;
+    const history = useHistory();
 
     React.useEffect(() => {
         GetRequest("/api/user", function (response) {
-            setUserData(response)
+            if(response){
+                setUserData(data => ({ ...data, name: response.name, age: response.age, score: response.score }))
+            }
+            
         });
     }, []);
 
@@ -16,11 +21,18 @@ export default function HomePage() {
         evt.preventDefault();
 
         GetRequest('/api/user/logout', function (response) {
-            accountAuth.signOut(()=> setRedirectToReferrer(false))
+            accountAuth.signOut(() => {
+                setRedirectToReferrer(false);
+                history.push('/')
+            })
         });
     }
 
-    if(!redirectToReferrer){
+    const handleChange = (evt) => {
+        setUserData(data => ({ ...data, [evt.target.name]: evt.target.value }))
+    }
+
+    if (!redirectToReferrer) {
         return <Redirect to={'/sign-in'} />
     }
 
@@ -33,17 +45,17 @@ export default function HomePage() {
                 <>
                     <div className="form-group">
                         <label>Username</label>
-                        <input type="text" name="name" defaultValue={name} className="form-control" readOnly />
+                        <input type="text" name="name" value={getUserData.name} onChange={handleChange} className="form-control" readOnly />
                     </div>
 
                     <div className="form-group">
                         <label>Age</label>
-                        <input type="text" name="age" defaultValue={age} readOnly className="form-control" />
+                        <input type="text" name="age" value={getUserData.age} onChange={handleChange} readOnly className="form-control" />
                     </div>
 
                     <div className="form-group">
                         <label>Score</label>
-                        <input type="text" name="score" defaultValue={score} readOnly className="form-control" />
+                        <input type="text" name="score" value={getUserData.score} onChange={handleChange} readOnly className="form-control" />
                     </div>
 
                     <p className="forgot-password text-right">
