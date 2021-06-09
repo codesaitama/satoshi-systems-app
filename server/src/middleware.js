@@ -1,24 +1,25 @@
 const jwt = require('jsonwebtoken');
 const HttpException = require('./HttpException.js');
-const UserModel = require('./model/user.model.js')
+const UserModel = require('./model/user.model.js');
+const {AuthType, _JWTSecret} = require('./utils.min.js');
 
 const dotenv = require('dotenv');
 dotenv.config();
 
-const authenticate = (...roles) => {
+const authenticate = (authType, ...roles) => {
     return async function (req, res, next) {
         try {
-            // const authHeader = req.headers.authorization;
-            // const bearer = 'Bearer ';
+            let authHeader = '', bearer = '';
 
-            // if (!authHeader || !authHeader.startsWith(bearer)) {
-            //     throw new HttpException(401, 'Access denied. No credentials sent!');
-            // }
+            if (authType === AuthType.cookie){
+                authHeader = req.headers.cookie;
+                bearer = 'token=';
+            }
 
-            // const token = authHeader.replace(bearer, '');
-
-            const authHeader = req.headers?.cookie;
-            const bearer = 'token=';
+            if (authType === AuthType.bearer){
+                authHeader = req.headers.authorization;
+                bearer = 'Bearer ';
+            }
 
             if (!authHeader || !authHeader.startsWith(bearer)) {
                 throw new HttpException(401, 'Access denied. No credentials sent!');
@@ -26,7 +27,7 @@ const authenticate = (...roles) => {
 
             const token = authHeader.replace(bearer, '');
 
-            const secretKey = process.env.SECRET_JWT
+            const secretKey = process.env.SECRET_JWT || _JWTSecret;
 
             // Verify Token
             const decoded = jwt.verify(token, secretKey);
