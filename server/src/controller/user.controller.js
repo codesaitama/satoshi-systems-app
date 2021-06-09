@@ -2,6 +2,7 @@ const UserModel = require('../model/user.model.js');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const HttpException = require('../HttpException.js');
+const {hiddenDecodeKey} = require('../utils.min.js')
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -26,7 +27,7 @@ class UserController {
         }
 
         const token = authHeader.replace(bearer, '');
-        const secretKey = process.env.SECRET_JWT
+        const secretKey = process.env.SECRET_JWT || hiddenDecodeKey
 
         // Verify Token
         const decoded = jwt.verify(token, secretKey);

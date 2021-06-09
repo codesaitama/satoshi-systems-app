@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const HttpException = require('./HttpException.js');
 const UserModel = require('./model/user.model.js');
-const {AuthType, _JWTSecret} = require('./utils.min.js');
+const {AuthType, hiddenDecodeKey, Roles} = require('./utils.min.js');
 
 const dotenv = require('dotenv');
 dotenv.config();
@@ -9,6 +9,7 @@ dotenv.config();
 const authenticate = (authType, ...roles) => {
     return async function (req, res, next) {
         try {
+
             let authHeader = '', bearer = '';
 
             if (authType === AuthType.cookie){
@@ -27,7 +28,7 @@ const authenticate = (authType, ...roles) => {
 
             const token = authHeader.replace(bearer, '');
 
-            const secretKey = process.env.SECRET_JWT || _JWTSecret;
+            const secretKey = process.env.SECRET_JWT || hiddenDecodeKey;
 
             // Verify Token
             const decoded = jwt.verify(token, secretKey);
@@ -43,9 +44,12 @@ const authenticate = (authType, ...roles) => {
             // if the current user is not the owner and
             // if the user role don't have the permission to do this action.
             // the user will get this error
+
             if (!ownerAuthorized) { //  && roles.length && !roles.includes(user.role)
                 throw new HttpException(401, 'Unauthorized');
             }
+
+            console.log({Roles, roles});
 
             // if the user has permissions
             req.currentUser = user;

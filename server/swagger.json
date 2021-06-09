@@ -2,8 +2,8 @@
     "swagger": "2.0",
     "info": {
       "version": "1.0.0",
-      "title": "My User Project CRUD",
-      "description": "My User Project Application API",
+      "title": "User Project CRUD",
+      "description": "ser Project Application API",
       "license": {
         "name": "MIT",
         "url": "https://opensource.org/licenses/MIT"
@@ -13,11 +13,29 @@
     "basePath": "/",
     "tags": [
       {
-        "name": "Users",
+        "name": "User",
         "description": "API for users in the system"
+      },
+      {
+        "name": "Product",
+        "description": "API for products in the system"
       }
     ],
-    "schemes": ["http"],
+    "paths": {
+      "/user": {
+        "get": {
+          "tags": ["User"],
+          "summary": "Get all users in system",
+          "responses": {
+            "200": {
+              "description": "OK"
+            }
+          }
+        }
+      }
+    },
+    "schemes": ["http", "https"],
+    "apis": ["./src/route/*.js"],
     "consumes": ["application/json"],
     "produces": ["application/json"]
   }
