@@ -18,7 +18,7 @@ class UserController {
             // const token = authHeader.replace(bearer, '');
 
        
-        const authHeader = req.headers?.cookie;
+        const authHeader = req.headers.cookie;
         const bearer = 'token=';
 
         if (!authHeader || !authHeader.startsWith(bearer)) {
@@ -40,7 +40,7 @@ class UserController {
     }
 
     isUserAlive = async (req, res, next) => {
-        const authHeader = req.headers?.cookie;
+        const authHeader = req.headers.cookie;
         const bearer = 'token=';
 
         if (!authHeader || !authHeader.startsWith(bearer)) {
